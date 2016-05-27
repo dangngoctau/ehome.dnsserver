@@ -22,7 +22,7 @@ namespace EHome.DnsClient
             {
                 Task t = Ping(dnsServerAddress, clientDomain, localIpAddresses);
                 t.Wait();
-                Thread.Sleep(interval * 1000);
+                Thread.Sleep(TimeSpan.FromMinutes(interval));
             }
         }
 
