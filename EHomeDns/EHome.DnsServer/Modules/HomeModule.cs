@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using EHome.DnsServer.Services;
 using Nancy;
+using System.Threading.Tasks;
 
 namespace EHome.DnsServer.Modules
 {
@@ -11,26 +12,26 @@ namespace EHome.DnsServer.Modules
     {
         private readonly IPingService _pingService;
 
-
         public HomeModule(IPingService pingService)
         {
             _pingService = pingService;
 
             Get["/"] = _ =>
             {
-                _pingService.Set(Request.UserHostAddress);
                 return "Hello";
             };
 
-            Get["/nic/update"] = _ =>
+            Get["/domain/{domain}/update", true] = async (ctx, ct)=>
             {
-                _pingService.Set(Request.UserHostAddress);
-                return "Hello update";
+                var domainName = ctx.domain;
+                var clientIp = Request.UserHostAddress;
+                var result = await _pingService.Set((string)domainName, (string)clientIp);
+                return result;
             };
             
-            Get["/ip"] = _ =>
-            {          
-                return _pingService.Get();
+            Get["/domain/{domain}/ip", true] = async (ctx, ct) =>
+            {
+                return await Task.FromResult(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath); //_pingService.Get((string)ctx.domain);
             };
         }
 

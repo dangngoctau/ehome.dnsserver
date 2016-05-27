@@ -16,6 +16,7 @@ namespace EHome.DnsServer
         {
             container.Register<IPingService, PingService>().AsSingleton();
             base.ConfigureApplicationContainer(container);
+            StaticConfiguration.DisableErrorTraces = false;
         }
     }
 
