@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EHome.DnsServer.Modules
 {
-    public class HomeModule: NancyModule
+    public class HomeModule : NancyModule
     {
         private readonly IPingService _pingService;
 
@@ -18,20 +18,25 @@ namespace EHome.DnsServer.Modules
 
             Get["/"] = _ =>
             {
-                return "Hello";
+                return "Hello from xedap629 DNS";
             };
 
-            Get["/domain/{domain}/update", true] = async (ctx, ct)=>
+            Get["/domain/{domain}/update/{ipAddresses}", true] = async (ctx, ct) =>
             {
                 var domainName = ctx.domain;
-                var clientIp = Request.UserHostAddress;
-                var result = await _pingService.Set((string)domainName, (string)clientIp);
+                var clientIp = Request.UserHostAddress + "," + ctx.ipAddresses;
+                var result = await _pingService.SetAsync(domainName, clientIp);
                 return result;
             };
-            
+
             Get["/domain/{domain}/ip", true] = async (ctx, ct) =>
             {
-                return await Task.FromResult(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath); //_pingService.Get((string)ctx.domain);
+                return await _pingService.GetAsync((string)ctx.domain);
+            };
+
+            Get["/list", true] = async (ctx, ct) =>
+            {
+                return await _pingService.ListAsync();
             };
         }
 
