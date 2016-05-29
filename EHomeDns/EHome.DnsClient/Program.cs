@@ -44,6 +44,10 @@ namespace EHome.DnsClient
                 {
                     Console.WriteLine("Error on sending Ping Request to DNS Server {0}:\n {1}\n", domain, ex.ToString());
                 }
+                catch (WebException ex)
+                {
+                    Console.WriteLine("Cannot establish connection to server: " + ex.ToString());
+                }
             }
         }
 
@@ -51,7 +55,7 @@ namespace EHome.DnsClient
         {
             return Dns.GetHostEntry(Dns.GetHostName()).AddressList
                 .Where(c => c.AddressFamily == AddressFamily.InterNetwork)
-                .Select(c => c.ToString()).OrderByDescending(c=>c).ToArray();
+                .Select(c => c.ToString()).OrderByDescending(c => c).ToArray();
         }
     }
 
